@@ -1,87 +1,45 @@
-// Create a HTTP server on port 8000
-// Send plain text headers and 'Hello World' to each client
- 
+// Main code of our server
+
+// Needed for creating the server. We will specify the
+// port and the server is running as expected!
 var http = require('http');
-var request = require('request');
+// Library needed for adding request to the server. With this
+// we can route POST/GET... requests to the right handler.
 var express = require('express');
 
-var app = express();
+// Needed as a connector for our DB in MongoDB
+var mongoose = require('mongoose');
 
+// Needed in order to avoid the Cross Domain or CORS
+var cors = require('cors');
+
+// Wrapper for our communication with AWS.
+// We will need it in order to publish our images to a public
+// storage.
+var aws = require('./aws/aws.js');
+
+// Let's create the app based on 'express'
+var app = express();
+app.use(cors()); // Enable cors module
 app.use(express.favicon());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.bodyParser());
-app.use(function(req, res, next) {
-  res.contentType('application/json');
-  next();
-});
 
+
+// As we will deploy in Heroku or similar, we will get the
+// port defined in the enviroment, or the 8080 by default
 var port = process.env.PORT || 8080;
-
-// var mongoURL = process.env.MONGOURL || 'mongodb://127.0.0.1:27017/simplepush';
-// // For running in appfog
-// if (process.env.VCAP_SERVICES) {
-//   var services = JSON.parse(process.env.VCAP_SERVICES);
-//   mongoURL = services['mongodb-1.8'][0].credentials.url;
-// }
-
 app.set('port', port);
-// app.set('mongoURL', mongoURL);
 
-// pushClient.init(mongoURL);
+// Connect with the DB. As before, we need to connect it with
+// the right ENV params, based on the platform to deploy.
+app.db = mongoose.connect(process.env.MONGOLAB_URI);
 
-// app.post('/api/v1/register', pushClient.register);
-// app.post('/api/v1/unregister', pushClient.unregister);
-// app.post('/api/v1/', pushClient.send);
-// app.get('/api/v1/:seq', pushClient.get);
+// Add the differents routes. When we request a GET/POST... from our
+// client we want to route it to the right handler.
+app.get('/sign_s3', aws.getCredentials);
 
-
-// CUIDADO! Este es peligrosete. Necesito diferenciar en el cliente
-// entre POST y GET, y cambiarlo aquí a POST.
-app.post('/v1/user/create', function(req, res) {
-  res.send(200, {method: 'create'});
-});
-
-app.get('/v1/user/:uuid', function(req, res) {
-  res.send(200, {method: 'get UUID'});
-});
-
-app.post('/v1/user/:uuid/update', function(req, res) {
-  res.send(200, {method: 'update'});
-});
-
-app.post('/v1/user/:uuid/delete', function(req, res) {
-  res.send(200, {method: 'delete'});
-});
-
-
-
-app.post('/v1/object/create', function(req, res) {
-  res.send(200, {method: 'create'});
-});
-
-app.get('/v1/object/:uuid', function(req, res) {
-  res.send(200, {method: 'get UUID'});
-});
-
-app.post('/v1/object/:uuid/update', function(req, res) {
-  res.send(200, {method: 'update'});
-});
-
-app.post('/v1/object/:uuid/delete', function(req, res) {
-  res.send(200, {method: 'delete'});
-});
-
-
-
-
-
-
+// Boot server in the right port
 http.createServer(app).listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
 });
-
-
-console.log('Server running at http://127.0.0.1:' + port);
-
-
