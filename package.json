@@ -1,0 +1,13 @@
+{
+  "name": "logofid_backend",
+  "version": "0.0.1",
+  "author": "Borja Salguero <borja.salguero@gmail.com>",
+  "description": "Backend for Logofid App",
+  "dependencies": {
+    "express": "3.0.x"
+  },
+  "engines" : {
+    "node" : "0.8.x",
+    "npm" : "1.1.x"
+  }
+}
