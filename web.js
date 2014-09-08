@@ -1,29 +1,87 @@
 // Create a HTTP server on port 8000
 // Send plain text headers and 'Hello World' to each client
-
+ 
 var http = require('http');
-var port = process.env.PORT || 8000;
+var request = require('request');
+var express = require('express');
 
-var counter = 0;
+var app = express();
 
-http.createServer(function (req, res) {
-  	
-  	// increment the counter for each visitor request
-  	counter=counter+1;
+app.use(express.favicon());
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.bodyParser());
+app.use(function(req, res, next) {
+  res.contentType('application/json');
+  next();
+});
 
-	var path = req.url;
-	console.log("requested=" + path + " counter=" + counter);
+var port = process.env.PORT || 8080;
 
-	res.writeHead(200, {'Content-Type': 'text/html'}); // prepare response headers
+// var mongoURL = process.env.MONGOURL || 'mongodb://127.0.0.1:27017/simplepush';
+// // For running in appfog
+// if (process.env.VCAP_SERVICES) {
+//   var services = JSON.parse(process.env.VCAP_SERVICES);
+//   mongoURL = services['mongodb-1.8'][0].credentials.url;
+// }
 
-	if (path == "/") {
-		res.end("Hello World. You are requestor # " + counter + ".<br><a href='/page2'>Page 2</a>\n");
+app.set('port', port);
+// app.set('mongoURL', mongoURL);
 
-	} else if (path == "/page2") {
-		res.end("This is page 2. <a href='/'>Back.</a>\n"); // send response and close connection	
-	}
+// pushClient.init(mongoURL);
 
-}).listen(port);
+// app.post('/api/v1/register', pushClient.register);
+// app.post('/api/v1/unregister', pushClient.unregister);
+// app.post('/api/v1/', pushClient.send);
+// app.get('/api/v1/:seq', pushClient.get);
 
-// console info message
+
+// CUIDADO! Este es peligrosete. Necesito diferenciar en el cliente
+// entre POST y GET, y cambiarlo aquí a POST.
+app.post('/v1/user/create', function(req, res) {
+  res.send(200, {method: 'create'});
+});
+
+app.get('/v1/user/:uuid', function(req, res) {
+  res.send(200, {method: 'get UUID'});
+});
+
+app.post('/v1/user/:uuid/update', function(req, res) {
+  res.send(200, {method: 'update'});
+});
+
+app.post('/v1/user/:uuid/delete', function(req, res) {
+  res.send(200, {method: 'delete'});
+});
+
+
+
+app.post('/v1/object/create', function(req, res) {
+  res.send(200, {method: 'create'});
+});
+
+app.get('/v1/object/:uuid', function(req, res) {
+  res.send(200, {method: 'get UUID'});
+});
+
+app.post('/v1/object/:uuid/update', function(req, res) {
+  res.send(200, {method: 'update'});
+});
+
+app.post('/v1/object/:uuid/delete', function(req, res) {
+  res.send(200, {method: 'delete'});
+});
+
+
+
+
+
+
+http.createServer(app).listen(app.get('port'), function() {
+  console.log('Express server listening on port ' + app.get('port'));
+});
+
+
 console.log('Server running at http://127.0.0.1:' + port);
+
+

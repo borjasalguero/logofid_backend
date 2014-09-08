@@ -4,7 +4,8 @@
   "author": "Borja Salguero <borja.salguero@gmail.com>",
   "description": "Backend for Logofid App",
   "dependencies": {
-    "express": "3.0.x"
+    "express": "*",
+    "request": "*"
   },
   "engines" : {
     "node" : "0.8.x",
