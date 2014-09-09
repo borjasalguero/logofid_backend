@@ -17,6 +17,7 @@ var cors = require('cors');
 // We will need it in order to publish our images to a public
 // storage.
 var aws = require('./aws/aws.js');
+var itemManager = require('./models/item.js');
 
 // Let's create the app based on 'express'
 var app = express();
@@ -38,6 +39,10 @@ app.db = mongoose.connect(process.env.MONGOLAB_URI);
 // Add the differents routes. When we request a GET/POST... from our
 // client we want to route it to the right handler.
 app.get('/sign_s3', aws.getCredentials);
+
+app.post('/api/v1/item/create', itemManager.create);
+app.post('/api/v1/item/update', itemManager.update);
+app.post('/api/v1/item/delete', itemManager.delete);
 
 // Boot server in the right port
 http.createServer(app).listen(app.get('port'), function() {
