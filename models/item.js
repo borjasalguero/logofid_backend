@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 // Define the schema of a single Item. Every "Item" must
 // belongs to, at least, one Collection.
 var ItemSchema = new Schema({
+    uuid : String,
     name : String,
     audioURL : String,
     photoURL : String,
