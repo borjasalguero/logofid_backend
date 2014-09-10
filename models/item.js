@@ -41,6 +41,23 @@ var ItemManager = {
         })
     });
   },
+  find: function(req, res) {
+    console.log('PARAMETROS DEL FIND ' + req.params.id);
+    ItemModel.find(
+      {
+        uuid: req.params.id
+      },
+      function(e, items) {
+        if (e) {
+          res.send(500, e.message);
+          return ;
+        }
+        console.log(JSON.stringify(items[0]));
+        res.status(200).jsonp(items[0]);
+      }
+    );
+
+  },
   update: function(req, res) {
     var params = req.body;
     debug && console.log('Lets update the item ' + JSON.stringify(params));

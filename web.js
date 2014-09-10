@@ -43,6 +43,7 @@ app.get('/sign_s3', aws.getCredentials);
 app.post('/api/v1/item/create', itemManager.create);
 app.post('/api/v1/item/update', itemManager.update);
 app.post('/api/v1/item/delete', itemManager.delete);
+app.get('/api/v1/item/uuid/:id', itemManager.find);
 
 // Boot server in the right port
 http.createServer(app).listen(app.get('port'), function() {
