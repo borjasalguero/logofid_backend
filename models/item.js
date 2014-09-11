@@ -48,9 +48,9 @@ var ItemManager = {
         uuid: req.params.id
       },
       function(e, items) {
-        if (e) {
-          res.send(500, e.message);
-          return ;
+        console.log('Existe algun item? ' + items.length);
+        if (e || items.length === 0) {
+          return res.send(500, 'err.message');
         }
         console.log(JSON.stringify(items[0]));
         res.status(200).jsonp(items[0]);
