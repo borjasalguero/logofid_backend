@@ -18,6 +18,7 @@ var cors = require('cors');
 // storage.
 var aws = require('./aws/aws.js');
 var itemManager = require('./models/item.js');
+var userManager = require('./models/user.js');
 
 // Let's create the app based on 'express'
 var app = express();
@@ -39,6 +40,10 @@ app.db = mongoose.connect(process.env.MONGOLAB_URI);
 // Add the differents routes. When we request a GET/POST... from our
 // client we want to route it to the right handler.
 app.get('/sign_s3', aws.getCredentials);
+
+app.get('/api/v1/users/:id', userManager.find);
+app.post('/api/v1/users/create', userManager.create);
+
 
 app.post('/api/v1/item/create', itemManager.create);
 app.post('/api/v1/item/update', itemManager.update);
