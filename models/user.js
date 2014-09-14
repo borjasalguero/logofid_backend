@@ -8,8 +8,8 @@ var UserSchema = new Schema({
     password : String,
     photoURL : String,
     endpoint : String,
-    collections : String,
-    items : String,
+    collections : [],
+    items : [],
     created : { type: Date, default: Date.now }
 });
 
@@ -18,10 +18,14 @@ var UserModel = mongoose.model('User', UserSchema);
 var debug = true;
 var UserManager = {
   create: function(req, res) {
-    // Necesito el endpoint
-    var params = req.body;
-    console.log('Estamos creando un usuario con ' + JSON.stringify(params));
-    res.status(200);
+
+    var newUser = new UserModel(req.body);
+    newUser.save(function(e, userCreated) {
+      if(e) {
+        return res.send(500, err.message);
+      }
+      res.status(200).jsonp(userCreated);
+    });
   },
   delete: function() {
    
@@ -30,6 +34,9 @@ var UserManager = {
     // aqui vamos con las params
     var params = req.params;
     console.log('Estamos pidiendo el usuario con username ' + JSON.stringify(params));
+    res.status(200).jsonp({
+      ok:true
+    });
   },
   update: function(req, res) {
    
