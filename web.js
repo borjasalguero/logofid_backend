@@ -49,6 +49,30 @@ app.post('/api/v1/item/update', itemManager.update);
 app.post('/api/v1/item/delete', itemManager.delete);
 app.get('/api/v1/item/uuid/:id', itemManager.find);
 
+var i = 11;
+var request = require('request');
+app.get('/api/v1/users/:id/push', function(req, res) {
+
+
+
+  console.log('vamos que nos vamos ' + req.params.id);
+  request(
+    {
+      method: 'PUT',
+      uri: 'https://as.push.tefdigital.com/v1/notify/1c2baa414464fb0a8353462c05995cd90549419004d00455be26ac51041db85a',
+      body: 'version=' + (++i),
+    }, function onRequest(error, response, body) {
+      if (error) {
+        res.send(500, error);
+        return;
+      }
+
+      res.send(response.statusCode, body);
+    }
+  );
+
+});
+
 // Boot server in the right port
 http.createServer(app).listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
