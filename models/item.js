@@ -9,7 +9,8 @@ var ItemSchema = new Schema({
     audioURL : String,
     photoURL : String,
     isShareable: { type: Boolean, default: false },
-    created : { type: Date, default: Date.now }
+    created : { type: Date, default: Date.now },
+    owner: String
 });
 
 var ItemModel = mongoose.model('Item', ItemSchema);
@@ -26,7 +27,9 @@ var ItemManager = {
       res.status(200).jsonp(itemCreated);
     });
   },
-  delete: function() {
+  deleteItem: function(req, res) {
+    console.log('DELETERRRR!');
+    console.log('Voy a borrar con ' + req.body._id);
     ItemModel.findById(
       req.body._id,
       function(err, item) {
@@ -37,26 +40,35 @@ var ItemManager = {
           if (err) {
             return res.send(500, err.message);
           }
-          res.status(200);
+          res.status(200).jsonp({hola: 'caracola'});
         })
     });
   },
+  getAllByUser: function(req, res) {
+    ItemModel.find(
+      {
+        owner: req.params.username
+      },
+      function(e, items) {
+        if (e || items.length === 0) {
+          return res.send(500, 'No item found');
+        }
+        res.status(200).jsonp(items);
+      }
+    );
+  },
   find: function(req, res) {
-    console.log('PARAMETROS DEL FIND ' + req.params.id);
     ItemModel.find(
       {
         uuid: req.params.id
       },
       function(e, items) {
-        console.log('Existe algun item? ' + items.length);
         if (e || items.length === 0) {
-          return res.send(500, 'err.message');
+          return res.send(500, 'No item found');
         }
-        console.log(JSON.stringify(items[0]));
         res.status(200).jsonp(items[0]);
       }
     );
-
   },
   update: function(req, res) {
     var params = req.body;

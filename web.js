@@ -43,11 +43,13 @@ app.get('/sign_s3', aws.getCredentials);
 
 app.get('/api/v1/users/:id', userManager.find);
 app.post('/api/v1/users/create', userManager.create);
+app.get('/api/v1/users/:username/items', itemManager.getAllByUser);
 
 app.post('/api/v1/item/create', itemManager.create);
 app.post('/api/v1/item/update', itemManager.update);
-app.post('/api/v1/item/delete', itemManager.delete);
-app.get('/api/v1/item/uuid/:id', itemManager.find);
+app.post('/api/v1/item/delete', itemManager.deleteItem);
+app.get('/api/v1/item/:id', itemManager.find);
+// app.get('/api/v1/item/uuid/:id', itemManager.find);
 
 var i = 11;
 var request = require('request');
