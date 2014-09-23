@@ -28,8 +28,6 @@ var ItemManager = {
     });
   },
   deleteItem: function(req, res) {
-    console.log('DELETERRRR!');
-    console.log('Voy a borrar con ' + req.body._id);
     ItemModel.findById(
       req.body._id,
       function(err, item) {

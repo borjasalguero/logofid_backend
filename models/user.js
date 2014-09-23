@@ -1,4 +1,6 @@
 var mongoose = require('mongoose');
+var simplePush = require('../simple_push/simple_push.js');
+
 var Schema = mongoose.Schema;
 
 // Define the schema of a single Item. Every "Item" must
@@ -9,7 +11,7 @@ var UserSchema = new Schema({
     photoURL : String,
     endpoint : String,
     collections : [],
-    items : [],
+    notifications : [],
     created : { type: Date, default: Date.now }
 });
 
@@ -26,6 +28,46 @@ var UserManager = {
       }
       res.status(200).jsonp(userCreated);
     });
+  },
+  notify: function(req, res) {
+    var params = req.body;
+    UserModel.find(
+      {
+        username: params.username
+      },
+      function(e, users) {
+        if (e || users.length === 0) {
+          return res.send(500, 'No user found');
+        }
+        users[0].notifications.push(params);
+        users[0].save(function(e, user) {
+          if (e) {
+            return res.send(500, err.message);
+          }
+          console.log('---- ACTUALIZADO ---- ');
+          simplePush.notify(users[0].endpoint);
+          // Enviar push
+
+          res.status(200).jsonp({status: 'notified'});
+        });
+      }
+    );
+  },
+  getNotifications: function(req, res) {
+    UserModel.find(
+      {
+        username: req.params.username
+      },
+      function(e, users) {
+        if (e || users.length === 0) {
+          return res.send(500, 'No user found');
+        }
+        
+        res.status(200).jsonp(users[0].notifications);
+        users[0].notifications = [];
+        users[0].save();
+      }
+    );
   },
   delete: function() {
    
