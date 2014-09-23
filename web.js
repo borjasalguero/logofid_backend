@@ -41,7 +41,7 @@ app.db = mongoose.connect(process.env.MONGOLAB_URI);
 // client we want to route it to the right handler.
 app.get('/sign_s3', aws.getCredentials);
 
-app.get('/api/v1/users/:id', userManager.find);
+app.get('/api/v1/users/:username', userManager.find);
 app.post('/api/v1/users/create', userManager.create);
 app.get('/api/v1/users/:username/items', itemManager.getAllByUser);
 

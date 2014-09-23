@@ -31,12 +31,17 @@ var UserManager = {
    
   },
   find: function(req, res) {
-    // aqui vamos con las params
-    var params = req.params;
-    console.log('Estamos pidiendo el usuario con username ' + JSON.stringify(params));
-    res.status(200).jsonp({
-      ok:true
-    });
+    UserModel.find(
+      {
+        username: req.params.username
+      },
+      function(e, users) {
+        if (e || users.length === 0) {
+          return res.send(500, 'No user found');
+        }
+        res.status(200).jsonp(users[0]);
+      }
+    );
   },
   update: function(req, res) {
    
