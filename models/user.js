@@ -10,6 +10,7 @@ var UserSchema = new Schema({
     password : String,
     photoURL : String,
     endpoint : String,
+    pushversion : { type: Number, default: 1 },
     collections : [],
     notifications : [],
     created : { type: Date, default: Date.now }
@@ -40,12 +41,13 @@ var UserManager = {
           return res.send(500, 'No user found');
         }
         users[0].notifications.push(params);
+        users[0].pushversion++;
         users[0].save(function(e, user) {
           if (e) {
             return res.send(500, err.message);
           }
           console.log('---- ACTUALIZADO ---- ');
-          simplePush.notify(users[0].endpoint);
+          simplePush.notify(users.pushversion, users.endpoint);
           // Enviar push
 
           res.status(200).jsonp({status: 'notified'});
@@ -86,7 +88,23 @@ var UserManager = {
     );
   },
   update: function(req, res) {
-   
+    UserModel.find(
+      {
+        username: req.params.username
+      },
+      function(e, users) {
+        if (e || users.length === 0) {
+          return res.send(500, 'No user found');
+        }
+        users[0].endpoint = req.params.endpoint;
+        users[0].save(function(e, user) {
+          if (e) {
+            return res.send(500, err.message);
+          }
+          res.status(200).jsonp(user);
+        });
+      }
+    );
   }
 };
 
