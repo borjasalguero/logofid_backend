@@ -21,7 +21,6 @@ var UserModel = mongoose.model('User', UserSchema);
 var debug = true;
 var UserManager = {
   create: function(req, res) {
-
     var newUser = new UserModel(req.body);
     newUser.save(function(e, userCreated) {
       if(e) {
@@ -46,12 +45,9 @@ var UserManager = {
           if (e) {
             return res.send(500, err.message);
           }
-          console.log('---- ACTUALIZADO ---- ');
-          console.log('Vamos a enviar un push a ' + users[0].endpoint);
-          console.log('Con version ' + users[0].pushversion);
+          debug && console.log('Send push to ' + users[0].endpoint);
+          debug && console.log('With version ' + users[0].pushversion);
           simplePush.notify(users[0].pushversion, users[0].endpoint);
-          // Enviar push
-
           res.status(200).jsonp({status: 'notified'});
         });
       }
@@ -90,23 +86,17 @@ var UserManager = {
     );
   },
   update: function(req, res) {
-
-    console.log('Vamos a requestear al usuario ' + req.body.username);
-    console.log('Vamos a requestear al usuario ' + req.body.endpoint);
     UserModel.find(
       {
         username: req.body.username
       },
       function(e, users) {
         if (e || users.length === 0) {
-          console.log('NO HAY USUARIO CON ESOS DATOS PARA ACTUALIZAR');
           return res.send(500, 'No user found');
         }
-        console.log('Tenemos usuario ' + JSON.stringify(users[0]));
         users[0].endpoint = req.body.endpoint;
         users[0].save(function(e, user) {
           if (e) {
-            console.log('ERROR AL HACER UN SAVE');
             return res.send(500, err.message);
           }
           res.status(200).jsonp(user);
