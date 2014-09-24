@@ -47,7 +47,9 @@ var UserManager = {
             return res.send(500, err.message);
           }
           console.log('---- ACTUALIZADO ---- ');
-          simplePush.notify(users.pushversion, users.endpoint);
+          console.log('Vamos a enviar un push a ' + users[0].endpoint);
+          console.log('Con version ' + users[0].pushversion);
+          simplePush.notify(users[0].pushversion, users[0].endpoint);
           // Enviar push
 
           res.status(200).jsonp({status: 'notified'});

@@ -43,6 +43,7 @@ app.get('/sign_s3', aws.getCredentials);
 
 app.get('/api/v1/users/:username', userManager.find);
 app.post('/api/v1/users/create', userManager.create);
+app.post('/api/v1/users/update', userManager.update);
 app.post('/api/v1/users/notify', userManager.notify);
 app.get('/api/v1/users/:username/notifications', userManager.getNotifications);
 app.get('/api/v1/users/:username/items', itemManager.getAllByUser);
