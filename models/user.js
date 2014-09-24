@@ -90,17 +90,22 @@ var UserManager = {
     );
   },
   update: function(req, res) {
+    console.log('Vamos a requestear al usuario ' + req.params.username);
+    console.log('Vamos a requestear al usuario ' + req.params.endpoint);
     UserModel.find(
       {
         username: req.params.username
       },
       function(e, users) {
         if (e || users.length === 0) {
+          console.log('NO HAY USUARIO CON ESOS DATOS PARA ACTUALIZAR');
           return res.send(500, 'No user found');
         }
+        console.log('Tenemos usuario ' + JSON.stringify(users[0]));
         users[0].endpoint = req.params.endpoint;
         users[0].save(function(e, user) {
           if (e) {
+            console.log('ERROR AL HACER UN SAVE');
             return res.send(500, err.message);
           }
           res.status(200).jsonp(user);
